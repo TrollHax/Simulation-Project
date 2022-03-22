@@ -1,4 +1,4 @@
-boolean mReleased;
+boolean mReleased, keyReleased, currentlyPressed;
 PVector mVelocity;
 
 StringList keysPressed;
@@ -54,6 +54,12 @@ void mousePressed() {
     }
     else {
         mReleased = false;
+    }
+}
+
+void keyReleased() {
+    if (state == "ELECTRO_WORLD"){
+        currentlyPressed = false;
     }
 }
 
