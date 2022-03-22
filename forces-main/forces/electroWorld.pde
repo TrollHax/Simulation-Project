@@ -1,12 +1,11 @@
 class ElectroWorld {
-
+  //Settings for electro world
+  int strokeSize, strokeColor;
   float k_e; // electrostatic constant (Not the real one :p )
-
+  
   ArrayList<ElectroObject> things; // Arraylist for all the things
-  //ArrayList<ElectroTObject> testThings; // Arraylist for all the test things
-
-  boolean fieldOn, toggleFieldOn, enableTObjects;
-  float stepLen;
+  boolean fieldOn, toggleFieldOn, toggleSettings;
+  float stepLen = 5;
 
   PVector field;
 
@@ -14,26 +13,28 @@ class ElectroWorld {
     k_e = _k_e;
 
     things = new ArrayList<ElectroObject>();
-    //testThings = new ArrayList<ElectroTObject>();
 
     field = new PVector(0, 0);
 
     fieldOn = false;
     toggleFieldOn = false;
+    keyReleased = false;
+    toggleSettings = false;
   }
 
   void run() {
 
-    // Add a thing if mouse released
-    if (mReleased) {
+    // Add a thing if key is pressed
+    if (keyPressed && currentlyPressed == false) {
       float charge = 0;
-      if (mouseButton == LEFT) {
+      if (key == 'q' || key == 'Q') {
         charge = 100;
-      } else if (mouseButton == RIGHT) {
+      } else if (key == 'e' || key == 'E') {
         charge = -100;
       }
-
-      things.add(new ElectroObject(
+      
+      if (charge != 0) {
+        things.add(new ElectroObject(
         new PVector(mouseX, mouseY), 
         new PVector(0, 0), 
         new PVector(0, 0), 
@@ -42,7 +43,8 @@ class ElectroWorld {
         50, 
         true));
 
-      mReleased = false;
+        currentlyPressed = true;
+      }
     }
 
     // Control electrostatic constant
@@ -76,19 +78,6 @@ class ElectroWorld {
       }
     }
 
-    // Add test objects if an electro object is present
-    if (things.size() > 0) {
-      for (int i = 0; i < 30; i++) {
-        for (int c = 0; c < 25; c++) {
-          PVector field = eField(
-            new PVector(20 + i*40, 20 + c*40), 
-            things);
-          float strength = map(field.mag(), 0, 0.005, 0, 255);
-          drawArrow(20 + i*40, 20 + c*40, 30, field.heading(), strength);
-        }
-      }
-    }
-
     // Run all things
     for (ElectroObject currentThing : things) {
       currentThing.run();
@@ -98,13 +87,32 @@ class ElectroWorld {
   void render() {
     background(0);
 
+    // Draw feld lines if an electro object is present
+    if (things.size() > 0){
+      drawField();
+    }
+
     // Render the dashboard with the k_e-value
-    fill(50);
-    rect(0, 0, 500, 70);
-    fill(255);
-    textSize(30);
-    textAlign(LEFT, TOP);
-    text("electrostatic constant = " + nf(k_e, 0, 3), 20, 20);
+    //fill(50);
+    //rect(0, 0, 500, 70);
+    //fill(255);
+    //textSize(30);
+    //textAlign(LEFT, TOP);
+    //text("electrostatic constant = " + nf(k_e, 0, 3), 20, 20);
+    // Render settings icon
+    if (!toggleSettings){
+      renderSettIcon();
+    } else if (toggleSettings) {
+      renderSettings();
+    }
+    if (mousePressed && mouseX < 105 && mouseY < 105){
+      toggleSettings = true;
+    } else if (mousePressed
+    && mouseX < 505
+    && mouseX > 415
+    && mouseY < 105) {
+      toggleSettings = false;
+    }
   }
 
   PVector calculateElectrostaticForce(ElectroObject currentThing, ElectroObject thing) {
@@ -142,17 +150,92 @@ class ElectroWorld {
     popMatrix();
   }
 
-  void fieldLine(PVector pos, float dir) {
-    PVector step = new PVector(0, 0);
-    PVector newPos = new PVector(0, 0);
-    boolean stop = false;
-    for (ElectroObject currentThing : things) {
-      while (!stop) {
-        step = eField(currentThing.position, things);
-        step.setMag(stepLen);
-        newPos = PVector.add(pos, step);
-        line(pos.x, pos.y, newPos.x, newPos.y);
+  void drawField(){
+
+    for (ElectroObject thing : things) {
+
+      if (thing.charge > 0){
+        for(int i = 0 ; i < 30 ; i++){
+          float dir = i * (2*3.14) / 30;
+          PVector firstStep = PVector.fromAngle(dir);
+          firstStep.setMag(20);
+          PVector startPos = PVector.add(thing.position, firstStep);
+          fieldLine(startPos, dir);
+        }         
       }
+
+    }
+
+  }
+
+  void fieldLine(PVector startPos, float startDir) {
+
+    // Draw first step in direction startDir (radians)
+    PVector step = PVector.fromAngle(startDir);
+    step.setMag(stepLen);
+    PVector newPos = PVector.add(startPos, step);
+    line(startPos.x, startPos.y, newPos.x, newPos.y);
+
+    PVector pos = newPos;
+    boolean stop = false;
+
+    while (!stop) {
+      step = eField(pos, things);
+      step.setMag(stepLen);
+      step.rotate(PI);
+      newPos = PVector.add(pos, step);
+
+      line(pos.x, pos.y, newPos.x, newPos.y);
+
+      pos = newPos;
+
+      // Stop drawing line if far away or reaching other charge
+        if (pos.dist(new PVector(width/2, height/2)) > 5000){
+         stop = true;
+       } else if (checkInThing(pos, things, 10)){
+         stop = true;
+       }
     }
   }
+
+  boolean checkInThing(PVector pos, ArrayList<ElectroObject> things, float collisionDistance){
+
+    for (ElectroObject thing : things) {
+      if (pos.dist(thing.position) < collisionDistance) {
+        return true;
+      }
+    }
+  
+    return false;
+  }
+
+  void renderSettIcon(){
+    fill(125);
+    stroke(255);
+    strokeWeight(5);
+    rect(5, 5, 100, 100);
+    textAlign(CENTER, CENTER);
+    textSize(75);
+    fill(0);
+    text("i", 55, 50);
+  }
+
+  void renderSettings(){
+    noStroke();
+    fill(125);
+    rect(0, 0, 400, height);
+    stroke(255);
+    strokeWeight(10);
+    line(400, 0, 400, height);
+
+    fill(125);
+    stroke(255);
+    strokeWeight(5);
+    rect(410, 5, 100, 100);
+    textAlign(CENTER, CENTER);
+    textSize(75);
+    fill(0);
+    text("i", 460, 50);
+  }
+
 }
