@@ -31,7 +31,7 @@ class ElectroObject {
     float _mass, 
     float _charge, 
     float _size, 
-    color _col,
+    color _col, 
     boolean _stationary) {
 
     position = _pos;
@@ -71,10 +71,14 @@ class ElectroObject {
 
   void render() {
     // Renders the object as a circle and force arrow
+    if (charge > 0) {
+      fill(myElectroWorld.negColor);
+    } else if (charge < 0) {
+      fill(myElectroWorld.posColor);
+    }
     float forceLen;
     float maxLen;
     noStroke();
-    fill(col);
     ellipse(position.x, position.y, size, size);
     forceLen = 1000 * totalForce.mag();
     maxLen = constrain(forceLen, 0, 125);
@@ -96,5 +100,15 @@ class ElectroObject {
     line(len, 0, len - 8, -8);
     line(len, 0, len - 8, 8);
     popMatrix();
+  }
+
+  void update(PVector _pos, 
+    PVector _vel, 
+    PVector _acc, 
+    float _mass, 
+    float _charge, 
+    float _size, 
+    color _col, 
+    boolean _stationary) {
   }
 }
