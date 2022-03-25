@@ -33,7 +33,7 @@ class ElectroTObject {
     acceleration = _acc;
     charge = _charge;
     mass = _mass;
-    
+
     totalForce = new PVector(0, 0);
   }
 
