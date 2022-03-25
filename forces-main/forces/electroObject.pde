@@ -31,6 +31,7 @@ class ElectroObject {
     float _mass, 
     float _charge, 
     float _size, 
+    color _col,
     boolean _stationary) {
 
     position = _pos;
@@ -39,15 +40,16 @@ class ElectroObject {
     charge = _charge;
     mass = _mass;
     size = _size;
+    col = _col;
     stationary =  _stationary;
 
     totalForce = new PVector(0, 0);
-    if (charge > 0) {
-      col = color(255,0,0);
-    }
-    else {
-      col = color(0,0,255);
-    }
+    //if (charge > 0) {
+    //  col = color(negColor);
+    //}
+    //else {
+    //  col = color(posColor);
+    //}
   }
 
   void run() {
