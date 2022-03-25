@@ -1,13 +1,17 @@
 class ElectroWorld {
   //Settings for electro world
-  int strokeSize, strokeColor;
+  int fieldSize;
+  color fieldColor, posColor, negColor,
+        arrowColor, red, green, blue, 
+        white, black;
+
   float k_e; // electrostatic constant (Not the real one :p )
   
   ArrayList<ElectroObject> things; // Arraylist for all the things
   boolean fieldOn, toggleFieldOn, toggleSettings;
   float stepLen = 5;
 
-  PVector field;
+  PVector field, settingsGrid;
 
   ElectroWorld(float _k_e) {
     k_e = _k_e;
@@ -15,11 +19,21 @@ class ElectroWorld {
     things = new ArrayList<ElectroObject>();
 
     field = new PVector(0, 0);
+    red = color(255, 0 ,0);
+    green = color(0, 255,0);
+    blue = color(0, 0, 255);
+    white = color(255);
+    black = color(0);
 
     fieldOn = false;
     toggleFieldOn = false;
     keyReleased = false;
     toggleSettings = false;
+    negColor = red;
+    posColor = blue;
+    fieldColor = white;
+    arrowColor = green;
+    settingsGrid = new PVector(200, 25);
   }
 
   void run() {
@@ -27,10 +41,13 @@ class ElectroWorld {
     // Add a thing if key is pressed
     if (keyPressed && currentlyPressed == false) {
       float charge = 0;
+      color objColor = color(0, 0, 0);
       if (key == 'q' || key == 'Q') {
         charge = 100;
+        objColor = negColor;
       } else if (key == 'e' || key == 'E') {
         charge = -100;
+        objColor = posColor;
       }
       
       if (charge != 0) {
@@ -40,7 +57,8 @@ class ElectroWorld {
         new PVector(0, 0), 
         50, 
         charge, 
-        50, 
+        50,
+        objColor, 
         true));
 
         currentlyPressed = true;
@@ -78,9 +96,25 @@ class ElectroWorld {
       }
     }
 
-    // Run all things
-    for (ElectroObject currentThing : things) {
-      currentThing.run();
+    // Toggle settings when pressing "i" button
+    if (mousePressed && mouseX < 105 && mouseY < 105){
+      toggleSettings = true;
+    } else if (mousePressed
+    && mouseX < 505
+    && mouseX > 415
+    && mouseY < 105) {
+      toggleSettings = false;
+    }
+
+    // Enable settingsConfig when toggleSettings is true
+    if (toggleSettings){
+      if (mousePressed 
+          && mouseX > settingsGrid.x - 100
+          && mouseX < settingsGrid.x - 50
+          && mouseY > settingsGrid.y + 5
+          && mouseY < settingsGrid.y + 55) {
+        posColor = green;
+      }
     }
   }
 
@@ -92,6 +126,11 @@ class ElectroWorld {
       drawField();
     }
 
+    // Run all things
+    for (ElectroObject currentThing : things) {
+      currentThing.run();
+    }
+
     // Render the dashboard with the k_e-value
     //fill(50);
     //rect(0, 0, 500, 70);
@@ -99,19 +138,12 @@ class ElectroWorld {
     //textSize(30);
     //textAlign(LEFT, TOP);
     //text("electrostatic constant = " + nf(k_e, 0, 3), 20, 20);
+
     // Render settings icon
     if (!toggleSettings){
       renderSettIcon();
     } else if (toggleSettings) {
       renderSettings();
-    }
-    if (mousePressed && mouseX < 105 && mouseY < 105){
-      toggleSettings = true;
-    } else if (mousePressed
-    && mouseX < 505
-    && mouseX > 415
-    && mouseY < 105) {
-      toggleSettings = false;
     }
   }
 
@@ -139,7 +171,7 @@ class ElectroWorld {
   }
 
   void drawArrow(float cx, float cy, float len, float angle, float strength) {
-    stroke(strength);
+    stroke(arrowColor);
     strokeWeight(1);
     pushMatrix();
     translate(cx, cy);
@@ -171,6 +203,7 @@ class ElectroWorld {
   void fieldLine(PVector startPos, float startDir) {
 
     // Draw first step in direction startDir (radians)
+    fill(fieldColor);
     PVector step = PVector.fromAngle(startDir);
     step.setMag(stepLen);
     PVector newPos = PVector.add(startPos, step);
@@ -221,16 +254,38 @@ class ElectroWorld {
   }
 
   void renderSettings(){
+    //Draw the settings screen and border
     noStroke();
     fill(125);
+    rectMode(CORNER);
     rect(0, 0, 400, height);
     stroke(255);
     strokeWeight(10);
     line(400, 0, 400, height);
 
+    //Settings for changing color of charges
+    fill(posColor);
+    textAlign(CENTER, CENTER);
+    textSize(30);
+    text("posColor", settingsGrid.x, settingsGrid.y);
+    strokeWeight(5);
+    noFill();
+    rectMode(CENTER);
+    rect(settingsGrid.x - 100, settingsGrid.y + 5, 50, 50);
+    rect(settingsGrid.x + 100, settingsGrid.y + 5, 50, 50);
+    fill(255);
+    text("<-", settingsGrid.x - 100, settingsGrid.y);
+    text("->", settingsGrid.x + 100, settingsGrid.y);
+
+
+    //Settings for changing field line color and size
+    //
+
+    //Draw the setting toggle
     fill(125);
     stroke(255);
     strokeWeight(5);
+    rectMode(CORNER);
     rect(410, 5, 100, 100);
     textAlign(CENTER, CENTER);
     textSize(75);
