@@ -2,8 +2,8 @@ class ElectroWorld {
   //Settings for electro world
   ElectroSettings settings = new ElectroSettings();
   int fieldSize;
-  color fieldColor, posColor, negColor, 
-    arrowColor;
+  color fieldColor, posColor, negColor,
+        chargeColor, arrowColor;
 
   float k_e; // electrostatic constant (Not the real one :p )
 
@@ -31,10 +31,11 @@ class ElectroWorld {
     fieldColor = settings.fieldColor;
     posColor = settings.posColor;
     negColor = settings.negColor;
+    chargeColor = settings.white;
     arrowColor = settings.arrowColor;
 
     // Add a thing if key is pressed
-    if (keyPressed && currentlyPressed == false) {
+    if (keyPressed && !currentlyPressed) {
       float charge = 0;
       color objColor = color(0, 0, 0);
       if (key == 'q' || key == 'Q') {
@@ -185,7 +186,7 @@ class ElectroWorld {
   void fieldLine(PVector startPos, float startDir) {
 
     // Draw first step in direction startDir (radians)
-    fill(settings.fieldColor);
+    stroke(fieldColor);
     PVector step = PVector.fromAngle(startDir);
     step.setMag(stepLen);
     PVector newPos = PVector.add(startPos, step);
@@ -199,7 +200,7 @@ class ElectroWorld {
       step.setMag(stepLen);
       step.rotate(PI);
       newPos = PVector.add(pos, step);
-
+      
       line(pos.x, pos.y, newPos.x, newPos.y);
 
       pos = newPos;
