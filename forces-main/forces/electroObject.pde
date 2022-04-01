@@ -71,15 +71,22 @@ class ElectroObject {
 
   void render() {
     // Renders the object as a circle and force arrow
+    char icon = ' ';
     if (charge > 0) {
       fill(myElectroWorld.negColor);
+      icon = '-';
     } else if (charge < 0) {
       fill(myElectroWorld.posColor);
+      icon = '+';
     }
     float forceLen;
     float maxLen;
     noStroke();
     ellipse(position.x, position.y, size, size);
+    textAlign(CENTER, CENTER);
+    fill(myElectroWorld.chargeColor);
+    textSize(50);
+    text(icon, position.x, position.y - 7.5);
     forceLen = 1000 * totalForce.mag();
     maxLen = constrain(forceLen, 0, 125);
     drawArrow(position.x, position.y, maxLen, totalForce.heading());
