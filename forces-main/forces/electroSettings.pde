@@ -12,8 +12,8 @@ class ElectroSettings {
     red = color(255, 0, 0);
     green = color(0, 255, 0);
     blue = color(0, 0, 255);
-    white = color(255);
-    black = color(0);
+    white = color(255, 255, 255);
+    black = color(0, 0, 0);
     negColor = red;
     posColor = blue;
     fieldColor = white;
@@ -30,6 +30,7 @@ class ElectroSettings {
       && mouseY < 105) {
       toggleSettings = false;
     }
+    mouseReleased();
   }
 
   void renderSettIcon() {
@@ -67,22 +68,130 @@ class ElectroSettings {
     text("<-", settingsGrid.x - 100, settingsGrid.y);
     text("->", settingsGrid.x + 100, settingsGrid.y);
     if (mousePressed 
-      && mouseX > settingsGrid.x - 100
-      && mouseX < settingsGrid.x - 50
-      && mouseY > settingsGrid.y + 5
-      && mouseY < settingsGrid.y + 55) {
-      if (posColor == blue) {
+      && mouseX > settingsGrid.x - 125
+      && mouseX < settingsGrid.x - 75
+      && mouseY > settingsGrid.y - 25
+      && mouseY < settingsGrid.y + 25
+      && mReleased) {
+      if (posColor == red) {
+        posColor = green;
+      } else if (posColor == blue) {
+        posColor = red;
+      } else if (posColor == green) {
+        posColor = blue;
+      }
+      mReleased = false;
+    }
+    if (mousePressed 
+      && mouseX > settingsGrid.x + 75
+      && mouseX < settingsGrid.x + 125
+      && mouseY > settingsGrid.y - 25
+      && mouseY < settingsGrid.y + 25
+      && mReleased) {
+      if (posColor == red) {
+        posColor = blue;
+      } else if (posColor == blue) {
         posColor = green;
       } else if (posColor == green) {
         posColor = red;
-      } else if (posColor == red) {
-        posColor = blue;
       }
+      mReleased = false;
+    }
+    fill(negColor);
+    textAlign(CENTER, CENTER);
+    textSize(30);
+    text("negColor", settingsGrid.x, settingsGrid.y + 50);
+    strokeWeight(5);
+    noFill();
+    rectMode(CENTER);
+    rect(settingsGrid.x - 100, settingsGrid.y + 55, 50, 50);
+    rect(settingsGrid.x + 100, settingsGrid.y + 55, 50, 50);
+    fill(255);
+    text("<-", settingsGrid.x - 100, settingsGrid.y + 50);
+    text("->", settingsGrid.x + 100, settingsGrid.y + 50);
+    if (mousePressed 
+      && mouseX > settingsGrid.x - 125
+      && mouseX < settingsGrid.x - 75
+      && mouseY > settingsGrid.y + 25
+      && mouseY < settingsGrid.y + 75
+      && mReleased) {
+      if (negColor == red) {
+        negColor = green;
+      } else if (negColor == blue) {
+        negColor = red;
+      } else if (negColor == green) {
+        negColor = blue;
+      }
+      mReleased = false;
+    }
+    if (mousePressed 
+      && mouseX > settingsGrid.x + 75
+      && mouseX < settingsGrid.x + 125
+      && mouseY > settingsGrid.y + 25
+      && mouseY < settingsGrid.y + 75
+      && mReleased) {
+      if (negColor == red) {
+        negColor = blue;
+      } else if (negColor == blue) {
+        negColor = green;
+      } else if (negColor == green) {
+        negColor = red;
+      }
+      mReleased = false;
     }
 
 
-    //Settings for changing field line color and size
-    //
+    //Settings for changing field line color
+    fill(fieldColor);
+    textAlign(CENTER, CENTER);
+    textSize(30);
+    text("fieldColor", settingsGrid.x, settingsGrid.y + 100);
+    strokeWeight(5);
+    noFill();
+    rectMode(CENTER);
+    rect(settingsGrid.x - 100, settingsGrid.y + 105, 50, 50);
+    rect(settingsGrid.x + 100, settingsGrid.y + 105, 50, 50);
+    fill(255);
+    text("<-", settingsGrid.x - 100, settingsGrid.y + 100);
+    text("->", settingsGrid.x + 100, settingsGrid.y + 100);
+    if (mousePressed 
+      && mouseX > settingsGrid.x - 125
+      && mouseX < settingsGrid.x - 75
+      && mouseY > settingsGrid.y + 75
+      && mouseY < settingsGrid.y + 125
+      && mReleased) {
+      if (fieldColor == white) {
+        fieldColor = black;
+      } else if (fieldColor == red) {
+        fieldColor = white;
+      } else if (fieldColor == green) {
+        fieldColor = red;
+      } else if (fieldColor == blue) {
+        fieldColor = green;
+      } else if (fieldColor == black) {
+        fieldColor = blue;
+      }
+      mReleased = false;
+    }
+    if (mousePressed 
+      && mouseX > settingsGrid.x + 75
+      && mouseX < settingsGrid.x + 125
+      && mouseY > settingsGrid.y + 75
+      && mouseY < settingsGrid.y + 125
+      && mReleased) {
+      if (fieldColor == white) {
+        fieldColor = red;
+      } else if (fieldColor == red) {
+        fieldColor = green;
+      } else if (fieldColor == green) {
+        fieldColor = blue;
+      } else if (fieldColor == blue) {
+        fieldColor = black;
+      } else if (fieldColor == black) {
+        fieldColor = white;
+      }
+      mReleased = false;
+    }
 
     //Draw the setting toggle
     fill(125);
