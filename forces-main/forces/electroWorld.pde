@@ -8,7 +8,7 @@ class ElectroWorld {
   float k_e; // electrostatic constant (Not the real one :p )
 
   ArrayList<ElectroObject> things; // Arraylist for all the things
-  boolean fieldOn, toggleFieldOn, toggleSettings;
+  boolean fieldOn, toggleFieldOn, toggleSettings, stationary;
   float stepLen = 5;
 
   PVector field, settingsGrid;
@@ -24,6 +24,7 @@ class ElectroWorld {
     fieldOn = false;
     toggleFieldOn = false;
     keyReleased = false;
+    stationary = true;
     settingsGrid = new PVector(200, 25);
   }
 
@@ -55,7 +56,7 @@ class ElectroWorld {
           charge, 
           50, 
           objColor, 
-          true));
+          stationary));
 
         currentlyPressed = true;
       }
@@ -66,6 +67,15 @@ class ElectroWorld {
       k_e = k_e + 0.001;
     } else if (keysPressed.hasValue("s")) {
       k_e = k_e - 0.001;
+    }
+    
+    if (keysPressed.hasValue("r")) {
+      if (stationary == true){
+        stationary = false;
+      }
+      else {
+        stationary = true;
+      }
     }
 
     // Toggle field on
@@ -85,6 +95,15 @@ class ElectroWorld {
   }
 
   void update() {
+    
+    fill(255);
+    textSize(30);
+    textAlign(LEFT);
+    if (!toggleSettings){
+      text("press q for electron", 0, 130);
+      text("press e for proton", 0, 170);
+      text("press r to toggle movement", 0, 210);
+    }
 
     // Apply electroforce to all things
     for (ElectroObject currentThing : things) {
@@ -113,7 +132,7 @@ class ElectroWorld {
 
     // Run all things
     for (ElectroObject currentThing : things) {
-      currentThing.run();
+      currentThing.run(stationary);
     }
 
     // Render the dashboard with the k_e-value
@@ -155,7 +174,7 @@ class ElectroWorld {
     return eField;
   }
 
-  void drawArrow(float cx, float cy, float len, float angle, float strength) {
+  void drawArrow(float cx, float cy, float len, float angle) {
     stroke(settings.arrowColor);
     strokeWeight(1);
     pushMatrix();

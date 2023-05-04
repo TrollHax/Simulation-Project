@@ -6,7 +6,7 @@
  * acceleration, velocity and position.
  *
  * @author  Reymond T
- * @version 1.3
+ * @version 1.4
  * @since   2022-02-23
  */
 
@@ -50,8 +50,6 @@ class ElectroTObject {
 
   void render() {
     // Renders the force arrow
-    float forceLen;
-    float maxLen;
     stroke(255);
     float strength = map(totalForce.mag(), 0, 0.1, 0, 100);
     drawArrow(position.x, position.y, 50, totalForce.heading(), strength);

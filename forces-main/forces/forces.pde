@@ -9,7 +9,7 @@ ElectroWorld myElectroWorld;
 String state;
 
 void setup() {
-  size(1200, 1000);
+  size(1280, 720);
 
   mReleased = false;
   mVelocity = new PVector(0, 0);
@@ -75,7 +75,7 @@ void renderMenu() {
   textAlign(CENTER);
   textSize(50);
   fill(255, 255, 0);
-  text("1: Gravity, 2: Electro", width/2, height/2);
+  text("1: Gravity (Deprecated), 2: Electro", width/2, height/2);
 
   if (keysPressed.hasValue("1")) {
     state = "GRAVITY_WORLD";

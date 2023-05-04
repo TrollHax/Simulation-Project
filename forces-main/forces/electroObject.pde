@@ -5,7 +5,7 @@
  * acceleration, velocity and position.
  *
  * @author  Reymond T (original author: Andreas W)
- * @version 1.1
+ * @version 1.2
  * @since   2022-02-14
  */
 
@@ -52,12 +52,12 @@ class ElectroObject {
     //}
   }
 
-  void run() {
+  void run(boolean stationaryActive) {
     render();
-    update();
+    update(stationaryActive);
   }
 
-  void update() {
+  void update(boolean stationary) {
     // Updates acceleration, velocity and position if not stationary
     if (!stationary) {
       acceleration = totalForce.div(mass); // Newtons second law
@@ -107,15 +107,5 @@ class ElectroObject {
     line(len, 0, len - 8, -8);
     line(len, 0, len - 8, 8);
     popMatrix();
-  }
-
-  void update(PVector _pos, 
-    PVector _vel, 
-    PVector _acc, 
-    float _mass, 
-    float _charge, 
-    float _size, 
-    color _col, 
-    boolean _stationary) {
   }
 }
